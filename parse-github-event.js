@@ -159,6 +159,7 @@ function parse(event) {
                     };
             }
             break;
+        case 'IssueCommentEvent':
         case 'CommitCommentEvent':
         case 'PullRequestReviewCommentEvent':
             return {
