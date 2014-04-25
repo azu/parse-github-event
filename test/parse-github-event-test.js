@@ -15,7 +15,6 @@ describe("parse-github-event", function () {
             });
             it("should has repository data", function () {
                 var result = parseGithubEvent.parse(pullRequestEvent);
-                console.log(result);
                 assert("data" in result);
                 assert("repository" in result.data);
             });
