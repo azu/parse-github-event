@@ -1,4 +1,4 @@
-# parse-github-event
+# parse-github-event [![Build Status](https://travis-ci.org/azu/parse-github-event.svg)](https://travis-ci.org/azu/parse-github-event)
 
  Small library to parse [Event Types](https://developer.github.com/v3/activity/events/types/#watchevent "Event Types") which is Github API response.
 
