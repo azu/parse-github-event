@@ -142,7 +142,7 @@ function parse(event) {
             break;
         case 'WikiEvent':
         case 'GollumEvent':
-            switch (event.payload.action) {
+            switch (event.pages[0].payload.action) {
                 case 'created':
                     return {
                         text: "created a wiki page on %%repository%%",
