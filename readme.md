@@ -76,3 +76,13 @@ var result = parseGithubEvent.compile(json);
 MIT
 
 Thanks for [alindeman/github-timeline-widget](https://github.com/alindeman/github-timeline-widget "alindeman/github-timeline-widget").
+
+Use these as a reference
+
+* https://github.com/FenrirUnbound/github-feed/tree/FixPath/test/mocks
+* https://github.com/limbo0312/gitBox/tree/master/ioctocat2/iOctocatUnitTests/Fixtures
+* https://github.com/octokit/go-octokit/tree/master/fixtures
+* https://github.com/chamerling/QuickHubApp
+* https://github.com/linyows/octospy/tree/master/spec/fixtures
+* https://github.com/octokit/octokit.objc/tree/master/OctoKitTests/Stubs
+* https://github.com/octokit/octokit.net/tree/master/Octokit.Tests/Fixtures
