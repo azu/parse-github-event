@@ -31,7 +31,7 @@ describe("parse-github-event", function () {
             it("should return message", function () {
                 var result = parseGithubEvent.compile(pullRequestEvent);
                 var parsed = parseGithubEvent.parse(pullRequestEvent);
-                assert.equal(result, pullRequestEvent.actor.login + " opened issue on " + parsed.data.repository);
+                assert.equal(result, pullRequestEvent.actor.login + " opened issue on " + parsed.data.repository + "#" + parsed.data.number);
             });
         });
     });

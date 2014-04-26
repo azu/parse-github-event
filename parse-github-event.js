@@ -7,7 +7,7 @@ function parse(event) {
             switch (event.payload.ref_type) {
                 case 'repository':
                     return {
-                        text: "created repo %%repository%%",
+                        text: "created repo {{repository}}",
                         data: {
                             repository: repo
                         },
@@ -15,7 +15,7 @@ function parse(event) {
                     };
                 case 'tag':
                     return {
-                        text: "created tag %%ref_type%% at %%repository%%",
+                        text: "created tag {{ref_type}} at {{repository}}",
                         data: {
                             ref_type: event.payload.ref_type,
                             repository: repo
@@ -24,7 +24,7 @@ function parse(event) {
                     };
                 case 'branch':
                     return {
-                        text: "created branch %%ref_type%% at %%repository%%",
+                        text: "created branch {{ref_type}} at {{repository}}",
                         data: {
                             ref_type: event.payload.ref_type,
                             repository: repo
@@ -37,7 +37,7 @@ function parse(event) {
             switch (event.payload.action) {
                 case 'added':
                     return {
-                        text: "added %%member%% to %%repository%%",
+                        text: "added {{member}} to {{repository}}",
                         data: {
                             member: event.payload.member,
                             repository: repo
@@ -49,7 +49,7 @@ function parse(event) {
         case 'PushEvent':
             var branch = event.payload.ref.substr(event.payload.ref.lastIndexOf('/') + 1);
             return {
-                text: "pushed to %%branch%% at %%repository%%",
+                text: "pushed to {{branch}} at {{repository}}",
                 data: {
                     branch: branch,
                     repository: repo
@@ -59,7 +59,7 @@ function parse(event) {
             break;
         case 'ForkApplyEvent':
             return {
-                text: "merged to %%repository%%",
+                text: "merged to {{repository}}",
                 data: {
                     repository: repo
                 },
@@ -68,7 +68,7 @@ function parse(event) {
             break;
         case 'ForkEvent':
             return {
-                text: "forked %%repository%%",
+                text: "forked {{repository}}",
                 data: {
                     repository: repo
                 },
@@ -79,7 +79,7 @@ function parse(event) {
             switch (event.payload.action) {
                 case 'started':
                     return {
-                        text: "started watching %%repository%%",
+                        text: "started watching {{repository}}",
                         data: {
                             repository: repo
                         },
@@ -88,7 +88,7 @@ function parse(event) {
                     break;
                 case 'stopped':
                     return {
-                        text: "stopped watching %%repository%%",
+                        text: "stopped watching {{repository}}",
                         data: {
                             repository: repo
                         },
@@ -98,7 +98,7 @@ function parse(event) {
             break;
         case 'FollowEvent':
             return {
-                text: "followed %%login%%",
+                text: "followed {{login}}",
                 data: {
                     login: event.payload.target.login,
                     name: event.payload.target.name
@@ -108,23 +108,26 @@ function parse(event) {
             break;
         case 'IssuesEvent':
         case 'PullRequestEvent':
+            var payloadObject = (event.payload.pull_request || event.payload.issue);
             switch (event.payload.action) {
                 case 'opened':
                 case 'reopened':
                     return {
-                        text: "opened issue on %%repository%%",
+                        text: "opened issue on {{repository}}#{{number}}",
                         data: {
-                            repository: repo
+                            repository: repo,
+                            number: payloadObject.number
                         },
-                        html_url: (event.payload.pull_request || event.payload.issue).html_url
+                        html_url: payloadObject.html_url
                     };
                 case 'closed':
                     return {
-                        text: "closed issue on %%repository%%",
+                        text: "closed issue on {{repository}}#{{number}}",
                         data: {
-                            repository: repo
+                            repository: repo,
+                            number: payloadObject.number
                         },
-                        html_url: (event.payload.pull_request || event.payload.issue).html_url
+                        html_url: payloadObject.html_url
                     };
             }
             break;
@@ -132,7 +135,7 @@ function parse(event) {
             switch (event.payload.action) {
                 case 'create':
                     return {
-                        text: "created %%name%%",
+                        text: "created {{name}}",
                         data: {
                             name: event.payload.name
                         },
@@ -140,7 +143,7 @@ function parse(event) {
                     };
                 case 'update':
                     return {
-                        text: "updated %%name%%",
+                        text: "updated {{name}}",
                         data: {
                             name: event.payload.name
                         },
@@ -148,7 +151,7 @@ function parse(event) {
                     };
                 case 'fork':
                     return {
-                        text: "forked %%name%%",
+                        text: "forked {{name}}",
                         data: {
                             name: event.payload.name
                         },
@@ -162,7 +165,7 @@ function parse(event) {
                 return page.action === "created";
             })) {// created
                 return {
-                    text: "created a wiki page on %%repository%%",
+                    text: "created a wiki page on {{repository}}",
                     data: {
                         repository: repo
                     },
@@ -171,7 +174,7 @@ function parse(event) {
                 };
             } else { // edited
                 return {
-                    text: "edited a wiki page on %%repository%%",
+                    text: "edited a wiki page on {{repository}}",
                     data: {
                         repository: repo
                     },
@@ -181,13 +184,21 @@ function parse(event) {
                 };
             }
             break;
-        case 'IssueCommentEvent':
         case 'CommitCommentEvent':
-        case 'PullRequestReviewCommentEvent':
             return {
-                text: "commented on %%repository%%",
+                text: "commented on {{repository}}",
                 data: {
                     repository: repo
+                },
+                html_url: event.payload.comment.html_url
+            };
+        case 'IssueCommentEvent':
+        case 'PullRequestReviewCommentEvent':
+            return {
+                text: "commented on {{repository}}#{{number}}",
+                data: {
+                    repository: repo,
+                    number: (event.payload.pull_request || event.payload.issue).number
                 },
                 html_url: event.payload.comment.html_url
             };
@@ -196,7 +207,7 @@ function parse(event) {
             switch (event.payload.ref_type) {
                 case 'branch':
                     return {
-                        text: "deleted branch %%ref%% at %%repository%%",
+                        text: "deleted branch {{ref}} at {{repository}}",
                         data: {
                             ref: event.payload.ref,
                             ref_type: event.payload.ref_type,
@@ -208,7 +219,7 @@ function parse(event) {
             break;
         case 'PublicEvent':
             return {
-                text: "open sourced %%repository%%",
+                text: "open sourced {{repository}}",
                 data: {
                     repository: repo
                 },
@@ -216,7 +227,7 @@ function parse(event) {
             };
         case 'DownloadEvent':
             return {
-                text: "created download %%name%%",
+                text: "created download {{name}}",
                 data: {
                     name: event.payload.download.name
                 },
@@ -237,7 +248,7 @@ function compile(event) {
     var keys = Object.keys(object.data);
     var result = object.text;
     keys.forEach(function (key) {
-        result = result.replace("%%" + key + "%%", object.data[key]);
+        result = result.replace("{{" + key + "}}", object.data[key]);
     });
     return userName + " " + result;
 }
