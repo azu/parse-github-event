@@ -17,6 +17,7 @@ describe("parse-github-event", function () {
                 var result = parseGithubEvent.parse(pullRequestEvent);
                 assert("data" in result);
                 assert("repository" in result.data);
+                assert(result.html_url.length > 0);
             });
         });
     });
