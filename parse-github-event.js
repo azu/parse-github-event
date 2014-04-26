@@ -1,4 +1,5 @@
 "use strict";
+var GITHUB_DOMAIN = "https://github.com";
 function parse(event) {
     var repo = event.repo.name;
     switch (event.type) {
@@ -6,10 +7,11 @@ function parse(event) {
             switch (event.payload.ref_type) {
                 case 'repository':
                     return {
-                        "text": "created repo %%repository%%",
-                        "data": {
+                        text: "created repo %%repository%%",
+                        data: {
                             repository: repo
-                        }
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + repo
                     };
                 case 'tag':
                     return {
@@ -17,7 +19,8 @@ function parse(event) {
                         data: {
                             ref_type: event.payload.ref_type,
                             repository: repo
-                        }
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + repo + "/releases/tag/" + event.payload.ref
                     };
                 case 'branch':
                     return {
@@ -25,7 +28,8 @@ function parse(event) {
                         data: {
                             ref_type: event.payload.ref_type,
                             repository: repo
-                        }
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + repo + "/tree/" + event.payload.ref
                     };
             }
             break;
@@ -37,7 +41,8 @@ function parse(event) {
                         data: {
                             member: event.payload.member,
                             repository: repo
-                        }
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + event.payload.member.login
                     };
             }
             break;
@@ -48,7 +53,8 @@ function parse(event) {
                 data: {
                     branch: branch,
                     repository: repo
-                }
+                },
+                html_url: GITHUB_DOMAIN + "/" + repo + "/compare/" + event.payload.before + "..." + event.payload.head
             };
             break;
         case 'ForkApplyEvent':
@@ -56,7 +62,8 @@ function parse(event) {
                 text: "merged to %%repository%%",
                 data: {
                     repository: repo
-                }
+                },
+                html_url: GITHUB_DOMAIN + "/" + repo.name + "/compare/" + event.payload.before + "..." + event.payload.head
             };
             break;
         case 'ForkEvent':
@@ -64,7 +71,8 @@ function parse(event) {
                 text: "forked %%repository%%",
                 data: {
                     repository: repo
-                }
+                },
+                html_url: event.payload.forkee.html_url
             };
             break;
         case 'WatchEvent':
@@ -74,7 +82,8 @@ function parse(event) {
                         text: "started watching %%repository%%",
                         data: {
                             repository: repo
-                        }
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + repo
                     };
                     break;
                 case 'stopped':
@@ -82,7 +91,8 @@ function parse(event) {
                         text: "stopped watching %%repository%%",
                         data: {
                             repository: repo
-                        }
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + repo
                     };
             }
             break;
@@ -92,7 +102,8 @@ function parse(event) {
                 data: {
                     login: event.payload.target.login,
                     name: event.payload.target.name
-                }
+                },
+                html_url: GITHUB_DOMAIN + "/" + event.payload.target.login
             };
             break;
         case 'IssuesEvent':
@@ -104,14 +115,16 @@ function parse(event) {
                         text: "opened issue on %%repository%%",
                         data: {
                             repository: repo
-                        }
+                        },
+                        html_url: (event.payload.pull_request || event.payload.issue).html_url
                     };
                 case 'closed':
                     return {
                         text: "closed issue on %%repository%%",
                         data: {
                             repository: repo
-                        }
+                        },
+                        html_url: (event.payload.pull_request || event.payload.issue).html_url
                     };
             }
             break;
@@ -122,41 +135,50 @@ function parse(event) {
                         text: "created %%name%%",
                         data: {
                             name: event.payload.name
-                        }
+                        },
+                        html_url: event.payload.gist.html_url
                     };
                 case 'update':
                     return {
                         text: "updated %%name%%",
                         data: {
                             name: event.payload.name
-                        }
+                        },
+                        html_url: event.payload.gist.html_url
                     };
                 case 'fork':
                     return {
                         text: "forked %%name%%",
                         data: {
                             name: event.payload.name
-                        }
+                        },
+                        html_url: event.payload.gist.html_url
                     };
             }
             break;
         case 'WikiEvent':
         case 'GollumEvent':
-            switch (event.payload.pages[0].action) {
-                case 'created':
-                    return {
-                        text: "created a wiki page on %%repository%%",
-                        data: {
-                            repository: repo
-                        }
-                    };
-                case 'edited':
-                    return {
-                        text: "edited a wiki page on %%repository%%",
-                        data: {
-                            repository: repo
-                        }
-                    };
+            if (event.payload.pages.some(function (page) {
+                return page.action === "created";
+            })) {// created
+                return {
+                    text: "created a wiki page on %%repository%%",
+                    data: {
+                        repository: repo
+                    },
+                    html_url: event.payload.pages[0].html_url
+
+                };
+            } else { // edited
+                return {
+                    text: "edited a wiki page on %%repository%%",
+                    data: {
+                        repository: repo
+                    },
+                    // https://github.com/Constellation/escodegen/wiki/_compare/8071c6feb719b3c9e1742620aab9c1bbfda80e70...a567b1a221885a9ae5c576561e18ce68909624b6
+                    html_url: GITHUB_DOMAIN + "/" + repo
+                        + "/wiki/_compare/" + event.payload.pages[0].sha + "..." + event.payload.pages[event.payload.pages.length].sha
+                };
             }
             break;
         case 'IssueCommentEvent':
@@ -166,7 +188,8 @@ function parse(event) {
                 text: "commented on %%repository%%",
                 data: {
                     repository: repo
-                }
+                },
+                html_url: event.payload.comment.html_url
             };
 
         case 'DeleteEvent':
@@ -178,7 +201,8 @@ function parse(event) {
                             ref: event.payload.ref,
                             ref_type: event.payload.ref_type,
                             repository: repo
-                        }
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + repo
                     };
             }
             break;
@@ -187,21 +211,23 @@ function parse(event) {
                 text: "open sourced %%repository%%",
                 data: {
                     repository: repo
-                }
+                },
+                html_url: GITHUB_DOMAIN + "/" + repo
             };
         case 'DownloadEvent':
             return {
                 text: "created download %%name%%",
                 data: {
                     name: event.payload.download.name
-                }
+                },
+                html_url: event.payload.download.html_url
             };
     }
 
     console.warn('Event:' + event.type, event);
     // Dummy Object
     return {
-        text : "Dummy!! " + event.type
+        text: "Dummy!! " + event.type
     }
 }
 
