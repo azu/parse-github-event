@@ -199,6 +199,10 @@ function parse(event) {
     }
 
     console.warn('Event:' + event.type, event);
+    // Dummy Object
+    return {
+        text : "Dummy!! " + event.type
+    }
 }
 
 function compile(event) {
