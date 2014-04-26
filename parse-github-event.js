@@ -3,7 +3,7 @@ function parse(event) {
     var repo = event.repo.name;
     switch (event.type) {
         case 'CreateEvent':
-            switch (event.payload.object) {
+            switch (event.payload.ref_type) {
                 case 'repository':
                     return {
                         "text": "created repo %%repository%%",
@@ -197,6 +197,8 @@ function parse(event) {
                 }
             };
     }
+
+    console.warn('Event:' + event.type, event);
 }
 
 function compile(event) {
