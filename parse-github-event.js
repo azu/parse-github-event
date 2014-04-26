@@ -193,11 +193,10 @@ function parse(event) {
                 html_url: event.payload.comment.html_url
             };
         case 'PullRequestReviewCommentEvent':
-            console.log(event);
             return {
                 text: "commented on {{repository}}",
                 data: {
-                    repository: repo,
+                    repository: repo
                 },
                 html_url: event.payload.comment.html_url
             };
