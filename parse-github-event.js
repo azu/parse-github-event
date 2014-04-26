@@ -192,8 +192,16 @@ function parse(event) {
                 },
                 html_url: event.payload.comment.html_url
             };
-        case 'IssueCommentEvent':
         case 'PullRequestReviewCommentEvent':
+            console.log(event);
+            return {
+                text: "commented on {{repository}}",
+                data: {
+                    repository: repo,
+                },
+                html_url: event.payload.comment.html_url
+            };
+        case 'IssueCommentEvent':
             return {
                 text: "commented on {{repository}}#{{number}}",
                 data: {
@@ -234,11 +242,11 @@ function parse(event) {
                 html_url: event.payload.download.html_url
             };
     }
-
     console.warn('Event:' + event.type, event);
     // Dummy Object
     return {
-        text: "Dummy!! " + event.type
+        text: "Dummy!! " + event.type,
+        data: {}
     }
 }
 
