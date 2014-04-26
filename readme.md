@@ -47,7 +47,8 @@ var parsed = parseGithubEvent.parse(json);
 /*
 {
     text: 'opened issue on %%repository%%',
-    data: { repository: 'pivotal/cedar' }
+    data: { repository: 'pivotal/cedar' },
+    html_url : 'https://github.com/pivotal/cedar/pull/231'
 }
 */
 ```
