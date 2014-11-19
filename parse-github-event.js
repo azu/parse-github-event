@@ -162,8 +162,8 @@ function parse(event) {
         case 'WikiEvent':
         case 'GollumEvent':
             if (event.payload.pages.some(function (page) {
-                return page.action === "created";
-            })) {// created
+                    return page.action === "created";
+                })) {// created
                 return {
                     text: "created a wiki page on {{repository}}",
                     data: {
@@ -180,7 +180,7 @@ function parse(event) {
                     },
                     // https://github.com/Constellation/escodegen/wiki/_compare/8071c6feb719b3c9e1742620aab9c1bbfda80e70...a567b1a221885a9ae5c576561e18ce68909624b6
                     html_url: GITHUB_DOMAIN + "/" + repo
-                        + "/wiki/_compare/" + event.payload.pages[0].sha + "..." + event.payload.pages[event.payload.pages.length - 1].sha
+                    + "/wiki/_compare/" + event.payload.pages[0].sha + "..." + event.payload.pages[event.payload.pages.length - 1].sha
                 };
             }
             break;
@@ -239,6 +239,15 @@ function parse(event) {
                     name: event.payload.download.name
                 },
                 html_url: event.payload.download.html_url
+            };
+        case 'ReleaseEvent':
+            return {
+                text: "created tag {{tag_name}} at {{repository}}",
+                data: {
+                    tag_name: event.payload.release.tag_name,
+                    repository: repo
+                },
+                html_url: event.payload.release.html_url
             };
     }
     console.warn('Event:' + event.type, event);
