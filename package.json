@@ -7,6 +7,7 @@
     "url": "git://github.com/azu/parse-github-event.git"
   },
   "main": "./lib/parse-github-event.js",
+  "types": "./lib/parse-github-event.d.ts",
   "files": [
     "lib",
     "src"
