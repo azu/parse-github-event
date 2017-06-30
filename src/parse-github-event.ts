@@ -81,7 +81,7 @@ export interface ParsedEvent {
     html_url: string
 }
 
-function parse(event: Event): ParsedEvent | undefined {
+export function parse(event: Event): ParsedEvent | undefined {
     const repo = event.repo.name;
     const login = event.actor.login;
     switch (event.type) {
@@ -345,7 +345,7 @@ function parse(event: Event): ParsedEvent | undefined {
     return;
 }
 
-function compile(parsedEvent: ParsedEvent) {
+export function compile(parsedEvent: ParsedEvent) {
     const keys = Object.keys(parsedEvent.data);
     let result = parsedEvent.text;
     keys.forEach(function (key) {
@@ -353,6 +353,3 @@ function compile(parsedEvent: ParsedEvent) {
     });
     return parsedEvent.login + " " + result;
 }
-
-module.exports.parse = parse;
-module.exports.compile = compile;
