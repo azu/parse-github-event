@@ -4,7 +4,7 @@
  */
 "use strict";
 var parseGithubEvent = require("../lib/parse-github-event");
-var assert = require("power-assert");
+var assert = require("assert");
 describe("parse-github-event", function () {
     describe("#parse", function () {
         var pullRequestEvent = require("./fixtures/pull-request.json");

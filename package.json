@@ -30,10 +30,7 @@
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.6",
     "cross-env": "^5.0.1",
-    "espower-typescript": "^8.0.0",
-    "intelli-espower-loader": "0.0.7",
     "mocha": "^3.4.2",
-    "power-assert": "^1.4.4",
     "typescript": "^2.4.1"
   }
 }
