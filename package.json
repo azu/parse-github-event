@@ -6,9 +6,16 @@
   "repository": {
     "url": "git://github.com/azu/parse-github-event.git"
   },
-  "main": "parse-github-event.js",
+  "main": "./lib/parse-github-event.js",
+  "files": [
+    "lib",
+    "src"
+  ],
   "scripts": {
-    "test": "mocha test/*.js"
+    "test": "npm run build && mocha test/",
+    "build": "cross-env NODE_ENV=production tsc -p .",
+    "watch": "tsc -p . --watch",
+    "prepublish": "npm run --if-present build"
   },
   "directories": {
     "test": "test/"
@@ -19,8 +26,13 @@
     "url": "https://github.com/azu/parse-github-event/issues"
   },
   "devDependencies": {
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.6",
+    "cross-env": "^5.0.1",
+    "espower-typescript": "^8.0.0",
     "intelli-espower-loader": "0.0.7",
-    "mocha": "^1.18.2",
-    "power-assert": "^0.6.1"
+    "mocha": "^3.4.2",
+    "power-assert": "^1.4.4",
+    "typescript": "^2.4.1"
   }
 }

@@ -3,7 +3,7 @@
  * LICENSE : MIT
  */
 "use strict";
-var parseGithubEvent = require("../parse-github-event");
+var parseGithubEvent = require("../lib/parse-github-event");
 var assert = require("power-assert");
 describe("parse-github-event", function () {
     describe("#parse", function () {
@@ -25,12 +25,13 @@ describe("parse-github-event", function () {
         var pullRequestEvent = require("./fixtures/pull-request.json");
         context("when event type is pull request", function () {
             it("should return string", function () {
-                var result = parseGithubEvent.compile(pullRequestEvent);
+                var parsed = parseGithubEvent.parse(pullRequestEvent);
+                var result = parseGithubEvent.compile(parsed);
                 assert(typeof result === "string");
             });
             it("should return message", function () {
-                var result = parseGithubEvent.compile(pullRequestEvent);
                 var parsed = parseGithubEvent.parse(pullRequestEvent);
+                var result = parseGithubEvent.compile(parsed);
                 assert.equal(result, pullRequestEvent.actor.login + " opened issue on " + parsed.data.repository + "#" + parsed.data.number);
             });
         });

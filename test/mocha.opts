@@ -1,1 +1,1 @@
---require intelli-espower-loader
+--compilers ts:espower-typescript/guess
