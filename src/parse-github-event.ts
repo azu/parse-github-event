@@ -99,9 +99,9 @@ export function parse(event: Event): ParsedEvent | undefined {
                 case 'tag':
                     return {
                         login,
-                        text: "created tag {{ref_type}} at {{repository}}",
+                        text: "created tag {{ref}} at {{repository}}",
                         data: {
-                            ref_type: event.payload.ref_type,
+                            ref: event.payload.ref,
                             repository: repo
                         },
                         html_url: GITHUB_DOMAIN + "/" + repo + "/releases/tag/" + event.payload.ref
