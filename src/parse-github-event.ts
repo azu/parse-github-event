@@ -310,6 +310,17 @@ export function parse(event: Event): ParsedEvent | undefined {
                         },
                         html_url: GITHUB_DOMAIN + "/" + repo
                     };
+                case 'tag':
+                    return {
+                        login,
+                        text: "deleted tag {{ref}} at {{repository}}",
+                        data: {
+                            ref: event.payload.ref,
+                            ref_type: event.payload.ref_type,
+                            repository: repo
+                        },
+                        html_url: GITHUB_DOMAIN + "/" + repo
+                    };
             }
             break;
         case 'PublicEvent':
