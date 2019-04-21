@@ -15,7 +15,8 @@ npm install parse-github-event
 
 ## Usage
 
-json object
+Response json object of [Events](https://developer.github.com/v3/activity/events/) API.
+
 ``` json
 {
     "id": "2070416128",
@@ -44,11 +45,12 @@ json object
 }
 ```
 
-### parse
+### Parse response
 
 ``` js
 var parseGithubEvent = require("parse-github-event");
-var parsed = parseGithubEvent.parse(json);
+// responseJSON is come from https://developer.github.com/v3/activity/events/
+var parsed = parseGithubEvent.parse(responseJSON);
 /*
 {
     text: 'opened issue on %%repository%%',
