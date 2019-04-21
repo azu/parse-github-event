@@ -15,7 +15,7 @@ npm install parse-github-event
 
 ## Usage
 
-Response json object of [Events](https://developer.github.com/v3/activity/events/) API.
+Response json object of [GitHub Events API](https://developer.github.com/v3/activity/events/).
 
 ``` json
 {
