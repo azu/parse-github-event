@@ -1,6 +1,11 @@
 # parse-github-event [![Build Status](https://travis-ci.org/azu/parse-github-event.svg)](https://travis-ci.org/azu/parse-github-event)
 
- Small library to parse [Event Types](https://developer.github.com/v3/activity/events/types/#watchevent "Event Types") which is Github API response.
+Small library to parse [Event Types](https://developer.github.com/v3/activity/events/types/#watchevent "Event Types") from Github API response.
+
+## Feature
+
+- Parse event json and built message and html_url without addtional request
+- Create human-readable message like GitHub's timeline from event json
 
 ## Installation
 
