@@ -58,7 +58,7 @@ var parsed = parseGithubEvent.parse(json);
 */
 ```
 
-### compile
+### Create message
 
 It's bonus method.
 
@@ -67,6 +67,13 @@ var parseGithubEvent = require("parse-github-event");
 var result = parseGithubEvent.compile(json);
 // pivotal-brian-croom opened issue on pivotal/cedar
 ```
+
+## UseCase
+
+Create one-line message and html_url from event response.
+
+- [azu/github-to-twitter-lambda: Lambda bot that fetch own GitHub notifications/events and post to Twitter.](https://github.com/azu/github-to-twitter-lambda)
+- [azu/faao: Faao is a GitHub issue/pull-request client on Electron.](https://github.com/azu/faao)
 
 ## Contributing
 
