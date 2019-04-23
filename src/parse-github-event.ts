@@ -344,7 +344,7 @@ export function parse(event: Event): ParsedEvent | undefined {
         case 'ReleaseEvent':
             return {
                 login,
-                text: "created tag {{tag_name}} at {{repository}}",
+                text: "release {{tag_name}} at {{repository}}",
                 data: {
                     tag_name: event.payload.release.tag_name,
                     repository: repo
