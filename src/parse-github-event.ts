@@ -109,9 +109,9 @@ export function parse(event: Event): ParsedEvent | undefined {
                 case 'branch':
                     return {
                         login,
-                        text: "created branch {{ref_type}} at {{repository}}",
+                        text: "created branch {{ref}} at {{repository}}",
                         data: {
-                            ref_type: event.payload.ref_type,
+                            ref: event.payload.ref,
                             repository: repo
                         },
                         html_url: GITHUB_DOMAIN + "/" + repo + "/tree/" + event.payload.ref
