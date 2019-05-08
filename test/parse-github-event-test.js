@@ -2,37 +2,64 @@
  * Created by azu on 2014/04/26.
  * LICENSE : MIT
  */
-"use strict";
-var parseGithubEvent = require("../lib/parse-github-event");
-var assert = require("assert");
+const parseGithubEvent = require("../lib/parse-github-event");
+const assert = require("assert");
 describe("parse-github-event", function () {
     describe("#parse", function () {
-        var pullRequestEvent = require("./fixtures/pull-request.json");
-        context("when event type is pull request", function () {
-            it("should return object", function () {
-                var result = parseGithubEvent.parse(pullRequestEvent);
-                assert(typeof result === "object");
+        context("when event type is PullRequestEvent", function () {
+            const pullRequestEvent = require("./fixtures/PullRequestEvent.json");
+            const result = parseGithubEvent.parse(pullRequestEvent);
+            it("should has correct login", function () {
+                assert.equal(result.login, pullRequestEvent.actor.login);
+            });
+            it("should has correct text", function () {
+                assert.equal(result.text, "{{action}} pull request on {{repository}}#{{number}}");
             });
             it("should has repository data", function () {
-                var result = parseGithubEvent.parse(pullRequestEvent);
-                assert("data" in result);
-                assert("repository" in result.data);
+                assert(result.html_url.length > 0);
+            });
+        });
+
+        context("when event type is WatchEvent", function () {
+            const watchEvent = require("./fixtures/WatchEvent.json");
+            const result = parseGithubEvent.parse(watchEvent);
+            it("should has correct login", function () {
+                assert.equal(result.login, watchEvent.actor.login);
+            });
+            it("should has correct text", function () {
+                assert.equal(result.text, "starred {{repository}}");
+            });
+            it("should has repository data", function () {
+                assert(result.html_url.length > 0);
+            });
+        });
+
+        context("when event type is PushEvent", function () {
+            const pushEvent = require("./fixtures/PushEvent.json");
+            const result = parseGithubEvent.parse(pushEvent);
+            it("should has correct login", function () {
+                assert.equal(result.login, pushEvent.actor.login);
+            });
+            it("should has correct text", function () {
+                assert.equal(result.text, "pushed to {{branch}} at {{repository}}");
+            });
+            it("should has repository data", function () {
                 assert(result.html_url.length > 0);
             });
         });
     });
     describe("#compile", function () {
-        var pullRequestEvent = require("./fixtures/pull-request.json");
+        const pullRequestEvent = require("./fixtures/PullRequestEvent.json");
         context("when event type is pull request", function () {
             it("should return string", function () {
-                var parsed = parseGithubEvent.parse(pullRequestEvent);
-                var result = parseGithubEvent.compile(parsed);
+                const parsed = parseGithubEvent.parse(pullRequestEvent);
+                const result = parseGithubEvent.compile(parsed);
                 assert(typeof result === "string");
             });
             it("should return message", function () {
-                var parsed = parseGithubEvent.parse(pullRequestEvent);
-                var result = parseGithubEvent.compile(parsed);
-                assert.equal(result, pullRequestEvent.actor.login + " opened issue on " + parsed.data.repository + "#" + parsed.data.number);
+                const parsed = parseGithubEvent.parse(pullRequestEvent);
+                const result = parseGithubEvent.compile(parsed);
+                assert.equal(result, pullRequestEvent.actor.login + " opened pull request on " + parsed.data.repository + "#" + parsed.data.number);
             });
         });
     });
