@@ -313,12 +313,18 @@ declare namespace GithubApi {
    */
   interface CreateEvent extends BaseEvent {
     type: typeof CreateEventType
-    payload: {
-      ref_type: 'repository' | 'branch' | 'tag'
-      ref?: string
-      master_branch: 'master' | string
-      description: string
-    }
+    payload:
+      | {
+          ref_type: 'repository'
+          master_branch: 'master' | string
+          description: string
+        }
+      | {
+          ref_type: 'branch' | 'tag'
+          ref: string
+          master_branch: 'master' | string
+          description: string
+        }
   }
 
   /**
@@ -623,6 +629,6 @@ declare namespace GithubApi {
 export interface ParsedEvent {
   login: string
   text: string
-  data: object
+  data: { [x: string]: string | number }
   html_url: string
 }

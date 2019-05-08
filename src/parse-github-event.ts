@@ -45,7 +45,7 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                 text: "{{action}} {{member}} to {{repository}}",
                 data: {
                     action: event.payload.action,
-                    member: event.payload.member,
+                    member: event.payload.member.login,
                     repository: repo
                 },
                 html_url: GITHUB_DOMAIN + "/" + event.payload.member.login
