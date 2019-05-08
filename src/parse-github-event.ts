@@ -64,15 +64,6 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                 },
                 html_url: GITHUB_DOMAIN + "/" + repo + "/compare/" + event.payload.before + "..." + event.payload.head
             };
-        case 'ForkApplyEvent':
-            return {
-                login,
-                text: "merged to {{repository}}",
-                data: {
-                    repository: repo
-                },
-                html_url: GITHUB_DOMAIN + "/" + repo + "/compare/" + event.payload.before + "..." + event.payload.head
-            };
         case 'ForkEvent':
             return {
                 login,
@@ -96,16 +87,6 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                     };
             }
             break;
-        case 'FollowEvent':
-            return {
-                login,
-                text: "followed {{login}}",
-                data: {
-                    login: event.payload.target.login,
-                    name: event.payload.target.name
-                },
-                html_url: GITHUB_DOMAIN + "/" + event.payload.target.login
-            };
         case 'IssuesEvent':
         case 'PullRequestEvent':
             const payloadObject = (event.payload.pull_request || event.payload.issue);
@@ -132,38 +113,6 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                         html_url: payloadObject.html_url
                     };
             }
-            break;
-        case 'GistEvent':
-            switch (event.payload.action) {
-                case 'create':
-                    return {
-                        login,
-                        text: "created gist:{{id}}",
-                        data: {
-                            id: event.payload.gist.id
-                        },
-                        html_url: event.payload.gist.html_url
-                    };
-                case 'update':
-                    return {
-                        login,
-                        text: "updated gist:{{id}}",
-                        data: {
-                            id: event.payload.gist.id
-                        },
-                        html_url: event.payload.gist.html_url
-                    };
-                case 'fork':
-                    return {
-                        login,
-                        text: "forked gist:{{id}}",
-                        data: {
-                            id: event.payload.gist.id
-                        },
-                        html_url: event.payload.gist.html_url
-                    };
-            }
-            break;
         case 'GollumEvent':
             if (event.payload.pages.some(function (page: any) {
                     return page.action === "created";
@@ -252,15 +201,6 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                     repository: repo
                 },
                 html_url: GITHUB_DOMAIN + "/" + repo
-            };
-        case 'DownloadEvent':
-            return {
-                login,
-                text: "created download {{name}}",
-                data: {
-                    name: event.payload.download.name
-                },
-                html_url: event.payload.download.html_url
             };
         case 'ReleaseEvent':
             return {
