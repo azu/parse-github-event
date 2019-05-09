@@ -76,6 +76,7 @@ Create one-line message and html_url from event response.
 
 - [azu/github-to-twitter-lambda: Lambda bot that fetch own GitHub notifications/events and post to Twitter.](https://github.com/azu/github-to-twitter-lambda)
 - [azu/faao: Faao is a GitHub issue/pull-request client on Electron.](https://github.com/azu/faao)
+- [lawvs/buddy-github-events: View broadcast/received GItHub events from other people or organizations.](https://github.com/lawvs/buddy-github-events)
 
 ## Contributing
 
