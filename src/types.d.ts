@@ -629,6 +629,6 @@ declare namespace GithubApi {
 export interface ParsedEvent {
   login: string
   text: string
-  data: { [x: string]: string | number }
+  data: { [x: string]: string }
   html_url: string
 }

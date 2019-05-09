@@ -56,7 +56,7 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                 login,
                 text: "pushed to {{branch}} at {{repository}}",
                 data: {
-                    branch: branch,
+                    branch,
                     repository: repo
                 },
                 html_url: GITHUB_DOMAIN + "/" + repo + "/compare/" + event.payload.before + "..." + event.payload.head
@@ -91,7 +91,7 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                 data: {
                     action: event.payload.action,
                     repository: repo,
-                    number: event.payload.issue.number
+                    number: event.payload.issue.number.toString()
                 },
                 html_url: event.payload.issue.html_url
             }
@@ -102,7 +102,7 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                 data: {
                     action: event.payload.action,
                     repository: repo,
-                    number: event.payload.pull_request.number
+                    number: event.payload.pull_request.number.toString()
                 },
                 html_url: event.payload.pull_request.html_url
             }
@@ -154,7 +154,7 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                 data: {
                     action: event.payload.action,
                     repository: repo,
-                    number: event.payload.issue.number
+                    number: event.payload.issue.number.toString()
                 },
                 html_url: event.payload.comment.html_url
             };
@@ -212,7 +212,7 @@ export function compile(parsedEvent: ParsedEvent) {
     const keys = Object.keys(parsedEvent.data);
     let result = parsedEvent.text;
     keys.forEach(function (key) {
-        result = result.replace("{{" + key + "}}", (parsedEvent as any).data[key]);
+        result = result.replace("{{" + key + "}}", parsedEvent.data[key]);
     });
     return parsedEvent.login + " " + result;
 }

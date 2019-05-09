@@ -40,6 +40,9 @@ describe("parse-github-event", function () {
             it("should has correct login", function () {
                 assert.equal(result.login, pushEvent.actor.login);
             });
+            it("should has correct branch", function () {
+                assert(pushEvent.payload.ref.includes(result.data.branch));
+            });
             it("should has correct text", function () {
                 assert.equal(result.text, "pushed to {{branch}} at {{repository}}");
             });
