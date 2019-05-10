@@ -1,87 +1,8 @@
-"use strict";
+import { GithubApi, ParsedEvent } from "./types";
+
 const GITHUB_DOMAIN = "https://github.com";
 
-
-export interface Repo {
-    id: number;
-    name: string;
-    url: string;
-}
-
-export interface Actor {
-    id: number;
-    login: string;
-    gravatar_id: string;
-    avatar_url: string;
-    url: string;
-}
-
-export interface Org {
-    id: number;
-    login: string;
-    gravatar_id: string;
-    url: string;
-    avatar_url: string;
-}
-
-export type EventType =
-    | "CommitCommentEvent"
-    | "CreateEvent"
-    | "DeleteEvent"
-    | "DeploymentEvent"
-    | "DeploymentStatusEvent"
-    | "DownloadEvent"
-    | "FollowEvent"
-    | "ForkEvent"
-    | "ForkApplyEvent"
-    | "GistEvent"
-    | "GollumEvent"
-    | "InstallationEvent"
-    | "InstallationRepositoriesEvent"
-    | "IssueCommentEvent" //
-    | "IssuesEvent" //
-    | "LabelEvent" //
-    | "MarketplacePurchaseEvent"
-    | "MemberEvent"
-    | "MembershipEvent"
-    | "MilestoneEvent"
-    | "OrganizationEvent"
-    | "OrgBlockEvent"
-    | "PageBuildEvent"
-    | "ProjectCardEvent"
-    | "ProjectColumnEvent"
-    | "ProjectEvent"
-    | "PublicEvent"
-    | "PullRequestEvent" //
-    | "PullRequestReviewEvent" //
-    | "PullRequestReviewCommentEvent" //
-    | "PushEvent" //
-    | "ReleaseEvent" //
-    | "RepositoryEvent"
-    | "StatusEvent"
-    | "TeamEvent"
-    | "TeamAddEvent"
-    | "WatchEvent";
-
-export interface Event {
-    id: string;
-    type: EventType;
-    public: boolean;
-    payload: any;
-    repo: Repo;
-    actor: Actor;
-    org: Org;
-    created_at: string;
-}
-
-export interface ParsedEvent {
-    login: string;
-    text: string,
-    data: object,
-    html_url: string
-}
-
-export function parse(event: Event): ParsedEvent | undefined {
+export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
     const repo = event.repo.name;
     const login = event.actor.login;
     switch (event.type) {
@@ -109,9 +30,9 @@ export function parse(event: Event): ParsedEvent | undefined {
                 case 'branch':
                     return {
                         login,
-                        text: "created branch {{ref_type}} at {{repository}}",
+                        text: "created branch {{ref}} at {{repository}}",
                         data: {
-                            ref_type: event.payload.ref_type,
+                            ref: event.payload.ref,
                             repository: repo
                         },
                         html_url: GITHUB_DOMAIN + "/" + repo + "/tree/" + event.payload.ref
@@ -119,35 +40,23 @@ export function parse(event: Event): ParsedEvent | undefined {
             }
             break;
         case 'MemberEvent':
-            switch (event.payload.action) {
-                case 'added':
-                    return {
-                        login,
-                        text: "added {{member}} to {{repository}}",
-                        data: {
-                            member: event.payload.member,
-                            repository: repo
-                        },
-                        html_url: GITHUB_DOMAIN + "/" + event.payload.member.login
-                    };
-            }
-            break;
+            return {
+                login,
+                text: "{{action}} {{member}} to {{repository}}",
+                data: {
+                    action: event.payload.action,
+                    member: event.payload.member.login,
+                    repository: repo
+                },
+                html_url: GITHUB_DOMAIN + "/" + event.payload.member.login
+            };
         case 'PushEvent':
             const branch = event.payload.ref.substr(event.payload.ref.lastIndexOf('/') + 1);
             return {
                 login,
                 text: "pushed to {{branch}} at {{repository}}",
                 data: {
-                    branch: branch,
-                    repository: repo
-                },
-                html_url: GITHUB_DOMAIN + "/" + repo + "/compare/" + event.payload.before + "..." + event.payload.head
-            };
-        case 'ForkApplyEvent':
-            return {
-                login,
-                text: "merged to {{repository}}",
-                data: {
+                    branch,
                     repository: repo
                 },
                 html_url: GITHUB_DOMAIN + "/" + repo + "/compare/" + event.payload.before + "..." + event.payload.head
@@ -175,78 +84,30 @@ export function parse(event: Event): ParsedEvent | undefined {
                     };
             }
             break;
-        case 'FollowEvent':
+        case 'IssuesEvent':
             return {
                 login,
-                text: "followed {{login}}",
+                text: "{{action}} issue on {{repository}}#{{number}}",
                 data: {
-                    login: event.payload.target.login,
-                    name: event.payload.target.name
+                    action: event.payload.action,
+                    repository: repo,
+                    number: event.payload.issue.number.toString()
                 },
-                html_url: GITHUB_DOMAIN + "/" + event.payload.target.login
-            };
-        case 'IssuesEvent':
+                html_url: event.payload.issue.html_url
+            }
         case 'PullRequestEvent':
-            const payloadObject = (event.payload.pull_request || event.payload.issue);
-            switch (event.payload.action) {
-                case 'opened':
-                case 'reopened':
-                    return {
-                        login,
-                        text: "opened issue on {{repository}}#{{number}}",
-                        data: {
-                            repository: repo,
-                            number: payloadObject.number
-                        },
-                        html_url: payloadObject.html_url
-                    };
-                case 'closed':
-                    return {
-                        login,
-                        text: "closed issue on {{repository}}#{{number}}",
-                        data: {
-                            repository: repo,
-                            number: payloadObject.number
-                        },
-                        html_url: payloadObject.html_url
-                    };
+            return {
+                login,
+                text: "{{action}} pull request on {{repository}}#{{number}}",
+                data: {
+                    action: event.payload.action,
+                    repository: repo,
+                    number: event.payload.pull_request.number.toString()
+                },
+                html_url: event.payload.pull_request.html_url
             }
-            break;
-        case 'GistEvent':
-            switch (event.payload.action) {
-                case 'create':
-                    return {
-                        login,
-                        text: "created gist:{{id}}",
-                        data: {
-                            id: event.payload.gist.id
-                        },
-                        html_url: event.payload.gist.html_url
-                    };
-                case 'update':
-                    return {
-                        login,
-                        text: "updated gist:{{id}}",
-                        data: {
-                            id: event.payload.gist.id
-                        },
-                        html_url: event.payload.gist.html_url
-                    };
-                case 'fork':
-                    return {
-                        login,
-                        text: "forked gist:{{id}}",
-                        data: {
-                            id: event.payload.gist.id
-                        },
-                        html_url: event.payload.gist.html_url
-                    };
-            }
-            break;
         case 'GollumEvent':
-            if (event.payload.pages.some(function (page: any) {
-                    return page.action === "created";
-                })) {// created
+            if (event.payload.pages.some(page => page.action === "created")) { // created
                 return {
                     login,
                     text: "created a wiki page on {{repository}}",
@@ -254,7 +115,6 @@ export function parse(event: Event): ParsedEvent | undefined {
                         repository: repo
                     },
                     html_url: event.payload.pages[0].html_url
-
                 };
             } else { // edited
                 return {
@@ -280,23 +140,25 @@ export function parse(event: Event): ParsedEvent | undefined {
         case 'PullRequestReviewCommentEvent':
             return {
                 login,
-                text: "commented on {{repository}}",
+                text: "{{action}} commented on pull request {{repository}}#{{number}}",
                 data: {
-                    repository: repo
+                    action: event.payload.action,
+                    repository: repo,
+                    number: event.payload.pull_request.number.toString()
                 },
                 html_url: event.payload.comment.html_url
             };
         case 'IssueCommentEvent':
             return {
                 login,
-                text: "commented on {{repository}}#{{number}}",
+                text: "{{action}} commented on {{repository}}#{{number}}",
                 data: {
+                    action: event.payload.action,
                     repository: repo,
-                    number: (event.payload.pull_request || event.payload.issue).number
+                    number: event.payload.issue.number.toString()
                 },
                 html_url: event.payload.comment.html_url
             };
-
         case 'DeleteEvent':
             switch (event.payload.ref_type) {
                 case 'branch':
@@ -332,27 +194,18 @@ export function parse(event: Event): ParsedEvent | undefined {
                 },
                 html_url: GITHUB_DOMAIN + "/" + repo
             };
-        case 'DownloadEvent':
-            return {
-                login,
-                text: "created download {{name}}",
-                data: {
-                    name: event.payload.download.name
-                },
-                html_url: event.payload.download.html_url
-            };
         case 'ReleaseEvent':
             return {
                 login,
-                text: "created tag {{tag_name}} at {{repository}}",
+                text: "{{action}} release {{tag_name}} at {{repository}}",
                 data: {
+                    action: event.payload.action,
                     tag_name: event.payload.release.tag_name,
                     repository: repo
                 },
                 html_url: event.payload.release.html_url
             };
     }
-    console.warn('Event:' + event.type, event);
     return;
 }
 
@@ -360,7 +213,7 @@ export function compile(parsedEvent: ParsedEvent) {
     const keys = Object.keys(parsedEvent.data);
     let result = parsedEvent.text;
     keys.forEach(function (key) {
-        result = result.replace("{{" + key + "}}", (parsedEvent as any).data[key]);
+        result = result.replace("{{" + key + "}}", parsedEvent.data[key]);
     });
     return parsedEvent.login + " " + result;
 }
