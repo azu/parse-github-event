@@ -210,6 +210,9 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
 }
 
 export function compile(parsedEvent: ParsedEvent) {
+    if (!parsedEvent){
+        throw new Error("parsedEvent is not passed");
+    }
     const keys = Object.keys(parsedEvent.data);
     let result = parsedEvent.text;
     keys.forEach(function (key) {
