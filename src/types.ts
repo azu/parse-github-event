@@ -1,4 +1,4 @@
-declare namespace GithubApi {
+export declare namespace GithubApi {
   /**
    * EventType
    * @see https://developer.github.com/v3/activity/events/types/
