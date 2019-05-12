@@ -1,7 +1,7 @@
 {
   "name": "parse-github-event",
   "description": "parse Github API Event Types.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "homepage": "https://github.com/azu/parse-github-event/",
   "repository": {
     "url": "git://github.com/azu/parse-github-event.git"
