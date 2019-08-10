@@ -2,6 +2,7 @@ import { GithubApi, ParsedEvent } from "./types";
 
 const GITHUB_DOMAIN = "https://github.com";
 
+export { ParsedEvent };
 export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
     const repo = event.repo.name;
     const login = event.actor.login;
