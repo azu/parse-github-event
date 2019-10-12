@@ -3,6 +3,7 @@ import { GithubApi, ParsedEvent } from "./types";
 const GITHUB_DOMAIN = "https://github.com";
 
 export { ParsedEvent };
+
 export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
     const repo = event.repo.name;
     const login = event.actor.login;
@@ -126,7 +127,7 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                     },
                     // https://github.com/Constellation/escodegen/wiki/_compare/8071c6feb719b3c9e1742620aab9c1bbfda80e70...a567b1a221885a9ae5c576561e18ce68909624b6
                     html_url: GITHUB_DOMAIN + "/" + repo
-                    + "/wiki/_compare/" + event.payload.pages[0].sha + "..." + event.payload.pages[event.payload.pages.length - 1].sha
+                        + "/wiki/_compare/" + event.payload.pages[0].sha + "..." + event.payload.pages[event.payload.pages.length - 1].sha
                 };
             }
         case 'CommitCommentEvent':
@@ -211,10 +212,10 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
 }
 
 export function compile(parsedEvent: ParsedEvent) {
-    if (!parsedEvent){
+    if (!parsedEvent) {
         throw new Error("parsedEvent is not passed");
     }
-    const keys = Object.keys(parsedEvent.data);
+    const keys = parsedEvent.data ? Object.keys(parsedEvent.data) : [];
     let result = parsedEvent.text;
     keys.forEach(function (key) {
         result = result.replace("{{" + key + "}}", parsedEvent.data[key]);
