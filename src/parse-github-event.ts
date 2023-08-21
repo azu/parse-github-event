@@ -139,6 +139,17 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                 },
                 html_url: event.payload.comment.html_url
             };
+        case 'PullRequestReviewEvent':
+            return {
+                login,
+                text: "{{action}} reviewed on pull request {{repository}}#{{number}}",
+                data: {
+                    action: event.payload.action,
+                    repository: repo,
+                    number: event.payload.pull_request.number.toString()
+                },
+                html_url: event.payload.comment.html_url
+            };
         case 'PullRequestReviewCommentEvent':
             return {
                 login,
