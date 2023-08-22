@@ -148,7 +148,7 @@ export function parse(event: GithubApi.GithubEvent): ParsedEvent | undefined {
                     repository: repo,
                     number: event.payload.pull_request.number.toString()
                 },
-                html_url: event.payload.comment.html_url
+                html_url: event.payload.review.html_url
             };
         case 'PullRequestReviewCommentEvent':
             return {
